@@ -189,7 +189,6 @@
 #define UART_NR 8
 #define IMX_RXBD_NUM 20
 #define IMX_MODULE_MAX_CLK_RATE	80000000
-extern void early_print(const char *fmt, ...);////debug
 /* i.MX21 type uart runs on all i.mx except i.MX1 and i.MX6q */
 enum imx_uart_type {
 	IMX1_UART,
@@ -2091,7 +2090,7 @@ static void imx_console_early_write(struct console *con, const char *s,
 				    unsigned count)
 {
 	struct earlycon_device *dev = con->data;
-early_print("**imx_console_early_write()\n");////debug
+
 	uart_console_write(&dev->port, s, count, imx_console_early_putchar);
 }
 
@@ -2100,7 +2099,7 @@ imx_console_early_setup(struct earlycon_device *dev, const char *opt)
 {
 	if (!dev->port.membase)
 		return -ENODEV;
-early_print("**imx_console_early_setup() dev->port.membase=%xh\n", dev->port.membase);////debug
+
 	dev->con->write = imx_console_early_write;
 
 	return 0;
@@ -2188,7 +2187,7 @@ static int serial_imx_probe(struct platform_device *pdev)
 	int ret = 0, reg;
 	struct resource *res;
 	int txirq, rxirq, rtsirq;
-early_print("**serial_imx_probe()\n");////debug
+
 	sport = devm_kzalloc(&pdev->dev, sizeof(*sport), GFP_KERNEL);
 	if (!sport)
 		return -ENOMEM;
@@ -2249,8 +2248,6 @@ early_print("**serial_imx_probe()\n");////debug
 	}
 
 	sport->port.uartclk = clk_get_rate(sport->clk_per);
-	//printk(KERN_ERR "**serial_imx_probe() uartclk=%lu\n", sport->port.uartclk);////debug
-	//printk(KERN_ERR "**serial_imx_probe() IMX_MODULE_MAX_CLK_RATE=%lu\n", IMX_MODULE_MAX_CLK_RATE);////debug
 	if (sport->port.uartclk > IMX_MODULE_MAX_CLK_RATE) {
 		ret = clk_set_rate(sport->clk_per, IMX_MODULE_MAX_CLK_RATE);
 		if (ret < 0) {
@@ -2335,7 +2332,8 @@ early_print("**serial_imx_probe()\n");////debug
 			return ret;
 		}
 	} else {
-		ret = devm_request_irq(&pdev->dev, rxirq, imx_int, 0,
+		//ret = devm_request_irq(&pdev->dev, rxirq, imx_int, 0,////debug
+		ret = devm_request_irq(&pdev->dev, rxirq+16, imx_int, 0,
 				       dev_name(&pdev->dev), sport);
 		if (ret) {
 			dev_err(&pdev->dev, "failed to request irq: %d\n", ret);
@@ -2518,12 +2516,11 @@ static struct platform_driver serial_imx_driver = {
 static int __init imx_serial_init(void)
 {
 	int ret = uart_register_driver(&imx_reg);
-//early_print("**imx_serial_init() ret=%d\n", ret);////debug
+
 	if (ret)
 		return ret;
 
 	ret = platform_driver_register(&serial_imx_driver);
-//early_print("**imx_serial_init() platform ret=%d\n", ret);////debug
 	if (ret != 0)
 		uart_unregister_driver(&imx_reg);
 

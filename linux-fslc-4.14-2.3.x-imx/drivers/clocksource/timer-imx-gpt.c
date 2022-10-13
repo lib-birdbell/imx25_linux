@@ -328,7 +328,7 @@ static int __init mxc_clockevent_init(struct imx_timer *imxtm)
 {
 	struct clock_event_device *ced = &imxtm->ced;
 	struct irqaction *act = &imxtm->act;
-
+imxtm->irq += 16;////debug
 	early_print("**mxc_clockevent_init()\n");////debug
 	ced->name = "mxc_timer1";
 	ced->features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_DYNIRQ;

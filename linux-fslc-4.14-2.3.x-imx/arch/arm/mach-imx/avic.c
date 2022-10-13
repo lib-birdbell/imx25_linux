@@ -137,7 +137,6 @@ static void __exception_irq_entry avic_handle_irq(struct pt_regs *regs)
 	u32 nivector;
 
 	do {
-		printk(KERN_ERR "**avic_handle_irq()\n");////debug
 		nivector = imx_readl(avic_base + AVIC_NIVECSR) >> 16;
 		if (nivector == 0xffff)
 			break;
@@ -212,29 +211,22 @@ void __init mxc25_init_irq(void __iomem *irqbase)
 	int i;
 	int irq_base;
 
-	//early_print("**mxc25_init_irq() imx_write rr irq_base=%xh\n", (unsigned int)irqbase);////debug
+	early_print("**mxc25_init_irq() irq_base=%xh\n", (unsigned int)irqbase);////debug
 	avic_base = irqbase;
 
 	/* put the AVIC into the reset value with
 	 * all interrupts disabled
 	 */
 	imx_writel(0, avic_base + AVIC_INTCNTL);
-	//imx_writel(0, avic_base + AVIC_NIMASK);
 	imx_writel(0x1f, avic_base + AVIC_NIMASK);
-	//__raw_writel(0, avic_base + AVIC_INTCNTL);
-	//__raw_writel(0x1f, avic_base + AVIC_NIMASK);
 
 	/* disable all interrupts */
 	imx_writel(0, avic_base + AVIC_INTENABLEH);
 	imx_writel(0, avic_base + AVIC_INTENABLEL);
-	//__raw_writel(0, avic_base + AVIC_INTENABLEH);
-	//__raw_writel(0, avic_base + AVIC_INTENABLEL);
 
 	/* all IRQ no FIQ */
 	imx_writel(0, avic_base + AVIC_INTTYPEH);
 	imx_writel(0, avic_base + AVIC_INTTYPEL);
-	//__raw_writel(0, avic_base + AVIC_INTTYPEH);
-	//__raw_writel(0, avic_base + AVIC_INTTYPEL);
 
 	irq_base = irq_alloc_descs(-1, 0, AVIC_NUM_IRQS, numa_node_id());
 	WARN_ON(irq_base < 0);
@@ -242,16 +234,15 @@ void __init mxc25_init_irq(void __iomem *irqbase)
 	domain = irq_domain_add_legacy(NULL, AVIC_NUM_IRQS, irq_base, 0,
 				       &irq_domain_simple_ops, NULL);
 
-	for (i = 0; i < AVIC_NUM_IRQS / 32; i++, irq_base += 32){
-		printk(KERN_ERR "**mxc25_init_irq() i=%d, irq_base=%xh\n", i, irq_base);////debug
+	for (i = 0; i < AVIC_NUM_IRQS / 32; i++, irq_base += 32)
 		avic_init_gc(i, irq_base);
-	}////debug brace
 
 	/* Set default priority value (0) for all IRQ's */
 	for (i = 0; i < 8; i++)
 		__raw_writel(0, avic_base + AVIC_NIPRIORITY(i));
 
 
+	imx_writel(0x00000002, avic_base + AVIC_INTENABLEH);
 #ifdef CONFIG_FIQ
 	/* Initialize FIQ */
 	//init_FIQ();

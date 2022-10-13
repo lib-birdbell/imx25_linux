@@ -286,7 +286,7 @@ static int check_int_v1_v2(struct mxc_nand_host *host)
 static void irq_control_v1_v2(struct mxc_nand_host *host, int activate)
 {
 	uint16_t tmp;
-
+//printk(KERN_ERR "**irq_control_v1_v2()\n");////debug
 	tmp = readw(NFC_V1_V2_CONFIG1);
 
 	if (activate)
@@ -341,7 +341,7 @@ static u32 get_ecc_status_v3(struct mxc_nand_host *host)
 static irqreturn_t mxc_nfc_irq(int irq, void *dev_id)
 {
 	struct mxc_nand_host *host = dev_id;
-printk(KERN_ERR "**mxc_nfc_irq()\n");////debug
+//printk(KERN_ERR "**mxc_nfc_irq()\n");////debug
 	if (!host->devtype_data->check_int(host))
 		return IRQ_NONE;
 
@@ -370,25 +370,25 @@ udelay(1000);*/
 	 */
 	if (host->devtype_data->check_int(host))
 		return 0;
-printk(KERN_ERR "**wait_op_done() useirq=%d\n", useirq);////debug
+//printk(KERN_ERR "**wait_op_done() useirq=%d\n", useirq);////debug
 	if (useirq) {
 		unsigned long timeout;
 
-printk(KERN_ERR "**wait_op_done() reinit_completion\n");////debug
+//printk(KERN_ERR "**wait_op_done() reinit_completion\n");////debug
 		reinit_completion(&host->op_completion);
 
-printk(KERN_ERR "**wait_op_done() irq_control(host, 1)\n");////debug
+//printk(KERN_ERR "**wait_op_done() irq_control(host, 1)\n");////debug
 		irq_control(host, 1);
 
-printk(KERN_ERR "**wait_op_done() wait_for_completioin_timeout\n");////debug
+//printk(KERN_ERR "**wait_op_done() wait_for_completioin_timeout\n");////debug
 		timeout = wait_for_completion_timeout(&host->op_completion, HZ);////debug commented
 		//timeout = wait_for_completion_timeout(&host->op_completion, 1);
 		if (!timeout && !host->devtype_data->check_int(host)) {
-printk(KERN_ERR "**wait_op_done() timeout waiting for irq\n");////debug
+//printk(KERN_ERR "**wait_op_done() timeout waiting for irq\n");////debug
 			dev_dbg(host->dev, "timeout waiting for irq\n");
 			ret = -ETIMEDOUT;
 		}
-printk(KERN_ERR "**wait_op_done() useirq done\n");////debug
+//printk(KERN_ERR "**wait_op_done() useirq done\n");////debug
 	} else {
 		int max_retries = 8000;
 		int done;
@@ -409,7 +409,7 @@ printk(KERN_ERR "**wait_op_done() useirq done\n");////debug
 	}
 
 	WARN_ONCE(ret < 0, "timeout! useirq=%d\n", useirq);
-	printk(KERN_ERR "**wait_op_done() end\n");////debug
+	//printk(KERN_ERR "**wait_op_done() end\n");////debug
 
 	return ret;
 }
@@ -1281,6 +1281,7 @@ static void mxc_nand_command(struct mtd_info *mtd, unsigned command,
 
 	case NAND_CMD_READ0:
 	case NAND_CMD_READOOB:
+		//printk(KERN_ERR "--CONFIG2=%xh\n", readw(NFC_V1_V2_CONFIG2));////debug
 		if (command == NAND_CMD_READ0)
 			host->buf_start = column;
 		else
@@ -1786,8 +1787,9 @@ printk(KERN_ERR "**mxc_probe() host->irq=%d\n", host->irq);////debug
 	 * irq.
 	 */
 	host->devtype_data->irq_control(host, 0);
-
-	err = devm_request_irq(&pdev->dev, host->irq, mxc_nfc_irq,
+printk(KERN_ERR "**mxc_probe() devm_request_irq()\n");////debug
+	//err = devm_request_irq(&pdev->dev, host->irq, mxc_nfc_irq,
+	err = devm_request_irq(&pdev->dev, host->irq+16, mxc_nfc_irq,
 			0, DRIVER_NAME, host);
 printk(KERN_ERR "**mxc_probe() request_irq err=%d, irq=%d\n", err, host->irq);////debug
 	if (err)
@@ -1810,6 +1812,7 @@ printk(KERN_ERR "**mxc_probe() irqdepending_quirtk=%d\n", host->devtype_data->ir
 		host->devtype_data->irq_control(host, 1);
 	}
 
+printk(KERN_ERR "**mxc_probe() INTEN=%xh\n", __raw_readl(0xf8800010));////debug
 	/* first scan to find the device and get the page size */
 	printk(KERN_ERR "**mxc_probe() nand_scan_ident mtd->name=%s\n", mtd->name);////debug
 	err = nand_scan_ident(mtd, is_imx25_nfc(host) ? 4 : 1, NULL);
