@@ -764,12 +764,12 @@ static void check_stack_usage(void)
 #else
 static inline void check_stack_usage(void) {}
 #endif
-extern void early_print(const char *str, ...);////debug
+
 void __noreturn do_exit(long code)
 {
 	struct task_struct *tsk = current;
 	int group_dead;
-//early_print("**do_exit() code=%xh, comm=%s, tgid=%d\n", code, tsk->comm, tsk->tgid);////debug
+
 	profile_task_exit(tsk);
 	kcov_task_exit(tsk);
 
@@ -799,7 +799,6 @@ void __noreturn do_exit(long code)
 	 */
 	if (unlikely(tsk->flags & PF_EXITING)) {
 		pr_alert("Fixing recursive fault but reboot is needed!\n");
-		early_print("Fixing recursive fault but reboot is needed!\n");////debug
 		futex_exit_recursive(tsk);
 		set_current_state(TASK_UNINTERRUPTIBLE);
 		schedule();
@@ -811,9 +810,6 @@ void __noreturn do_exit(long code)
 		pr_info("note: %s[%d] exited with preempt_count %d\n",
 			current->comm, task_pid_nr(current),
 			preempt_count());
-		early_print("note: %s[%d] exited with preempt_count %d\n",
-			current->comm, task_pid_nr(current),
-			preempt_count());////debug
 		preempt_count_set(PREEMPT_ENABLED);
 	}
 
@@ -918,14 +914,13 @@ void complete_and_exit(struct completion *comp, long code)
 {
 	if (comp)
 		complete(comp);
-early_print("**complete_and_exit()\n");////debug
+
 	do_exit(code);
 }
 EXPORT_SYMBOL(complete_and_exit);
 
 SYSCALL_DEFINE1(exit, int, error_code)
 {
-	early_print("**SYSCALL_DEFINE1\n");////debug
 	do_exit((error_code&0xff)<<8);
 }
 
@@ -956,7 +951,7 @@ do_group_exit(int exit_code)
 		}
 		spin_unlock_irq(&sighand->siglock);
 	}
-early_print("**do_group_exit()\n");////debug
+
 	do_exit(exit_code);
 	/* NOTREACHED */
 }

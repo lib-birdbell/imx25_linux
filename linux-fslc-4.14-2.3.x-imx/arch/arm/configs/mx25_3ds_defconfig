@@ -296,7 +296,7 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="noinitrd console=ttymxc1,115200 earlyprintk=ttymxc1 root=/dev/mtdblock2 rw rootfstype=jffs2 ip=off"
+CONFIG_CMDLINE="noinitrd console=ttymxc1,115200 earlyprintk=ttymxc1 root=ubi0:rootfs rootfstype=ubifs ubi.mtd=3 ip=off"
 # CONFIG_XIP_KERNEL is not set
 # CONFIG_KEXEC is not set
 
