@@ -97,7 +97,7 @@ Specification<BR>
  CONSOLE : serial uart2(uart2_RXD_MUX, uart2_TXD_MUX)<BR>
 <BR>
 How to make define config<BR>
- # make mx25default_defconfig<BR>
+ &#35; make mx25default_defconfig<BR>
 <BR>
 Compiler<BR>
  arm-buildroot-linux-uclibcgnueabi-gcc.br_real (Buildroot 2021.05-git) 9.3.0<BR>
