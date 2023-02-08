@@ -88,3 +88,18 @@ arch/arm/plat-mxc/Kconfig:29:config ARCH_MX25<BR>
 arch/arm/plat-mxc/irq.c 2.6<BR>
 arch/arm/mach-imx/mm-imx21.c 4.14<BR>
         avic_base = IO_ADDRESS(AVIC_BASE_ADDR);<BR>
+# uboot-2018.01
+uboot for i.MX257<BR>
+<BR>
+Specification<BR>
+ CPU : i.MX25<BR>
+ NAND : 128MB<BR>
+ CONSOLE : serial uart2(uart2_RXD_MUX, uart2_TXD_MUX)<BR>
+<BR>
+How to make define config<BR>
+ # make mx25default_defconfig<BR>
+<BR>
+Compiler<BR>
+ arm-buildroot-linux-uclibcgnueabi-gcc.br_real (Buildroot 2021.05-git) 9.3.0<BR>
+<BR>
+use buildroot 2021.05<BR>
