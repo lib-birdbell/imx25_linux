@@ -44,7 +44,7 @@ struct fsl_esdhc_cfg esdhc_cfg[1] = {
 #define I2C_PAD_CTRL		(PAD_CTL_HYS | PAD_CTL_PUS_100K_UP | \
 				 PAD_CTL_ODE)
 
-static void mx25pdk_fec_init(void)
+static void mx25default_fec_init(void)
 {
 	static const iomux_v3_cfg_t fec_pads[] = {
 		MX25_PAD_FEC_TX_CLK__FEC_TX_CLK,
@@ -57,29 +57,31 @@ static void mx25pdk_fec_init(void)
 		MX25_PAD_FEC_RDATA1__FEC_RDATA1,
 		NEW_PAD_CTRL(MX25_PAD_FEC_TDATA1__FEC_TDATA1, FEC_OUT_PAD_CTRL),
 
-		NEW_PAD_CTRL(MX25_PAD_D12__GPIO_4_8, 0), /* FEC_RESET_B */
-		NEW_PAD_CTRL(MX25_PAD_A17__GPIO_2_3, 0), /* FEC_ENABLE_B */
-	};
+		//MX25_PAD_UART2_CTS__FEC_RX_ER,
 
+		NEW_PAD_CTRL(MX25_PAD_D12__GPIO_4_8, 0), /* FEC_RESET_B */
+		//NEW_PAD_CTRL(MX25_PAD_A17__GPIO_2_3, 0), /* FEC_ENABLE_B */
+	};
+/*
 	static const iomux_v3_cfg_t i2c_pads[] = {
 		NEW_PAD_CTRL(MX25_PAD_I2C1_CLK__I2C1_CLK, I2C_PAD_CTRL),
 		NEW_PAD_CTRL(MX25_PAD_I2C1_DAT__I2C1_DAT, I2C_PAD_CTRL),
-	};
+	};*/
 
 	imx_iomux_v3_setup_multiple_pads(fec_pads, ARRAY_SIZE(fec_pads));
 
 	/* Assert RESET and ENABLE low */
 	gpio_direction_output(FEC_RESET_B, 0);
-	gpio_direction_output(FEC_ENABLE_B, 0);
+	//gpio_direction_output(FEC_ENABLE_B, 0);
 
 	udelay(10);
 
 	/* Deassert RESET and ENABLE */
 	gpio_set_value(FEC_RESET_B, 1);
-	gpio_set_value(FEC_ENABLE_B, 1);
+	//gpio_set_value(FEC_ENABLE_B, 1);
 
 	/* Setup I2C pins so that PMIC can turn on PHY supply */
-	imx_iomux_v3_setup_multiple_pads(i2c_pads, ARRAY_SIZE(i2c_pads));
+	//imx_iomux_v3_setup_multiple_pads(i2c_pads, ARRAY_SIZE(i2c_pads));
 }
 
 int dram_init(void)
@@ -94,6 +96,8 @@ int dram_init(void)
  * Set up input pins with hysteresis and 100-k pull-ups
  */
 #define UART1_IN_PAD_CTRL	(PAD_CTL_HYS | PAD_CTL_PUS_100K_UP)
+#define UART2_IN_PAD_CTRL	(PAD_CTL_HYS | PAD_CTL_PUS_100K_UP)
+
 /*
  * FIXME: need to revisit this
  * The original code enabled PUE and 100-k pull-down without PKE, so the right
@@ -103,22 +107,32 @@ int dram_init(void)
  *	PAD_CTL_PUS_100K_DOWN for 100-k pull-down
  */
 #define UART1_OUT_PAD_CTRL	0
+#define UART2_OUT_PAD_CTRL	0
 
 static void mx25pdk_uart1_init(void)
 {
 	static const iomux_v3_cfg_t uart1_pads[] = {
 		NEW_PAD_CTRL(MX25_PAD_UART1_RXD__UART1_RXD, UART1_IN_PAD_CTRL),
 		NEW_PAD_CTRL(MX25_PAD_UART1_TXD__UART1_TXD, UART1_OUT_PAD_CTRL),
-		NEW_PAD_CTRL(MX25_PAD_UART1_RTS__UART1_RTS, UART1_OUT_PAD_CTRL),
-		NEW_PAD_CTRL(MX25_PAD_UART1_CTS__UART1_CTS, UART1_IN_PAD_CTRL),
 	};
 
 	imx_iomux_v3_setup_multiple_pads(uart1_pads, ARRAY_SIZE(uart1_pads));
 }
 
+static void mx25pdk_uart2_init(void)
+{
+	static const iomux_v3_cfg_t uart2_pads[] = {
+		NEW_PAD_CTRL(MX25_PAD_UART2_RXD__UART2_RXD, UART1_IN_PAD_CTRL),
+		NEW_PAD_CTRL(MX25_PAD_UART2_TXD__UART2_TXD, UART1_OUT_PAD_CTRL),
+	};
+
+	imx_iomux_v3_setup_multiple_pads(uart2_pads, ARRAY_SIZE(uart2_pads));
+}
+
 int board_early_init_f(void)
 {
 	mx25pdk_uart1_init();
+	mx25pdk_uart2_init();
 
 	return 0;
 }
@@ -136,18 +150,18 @@ int board_late_init(void)
 	struct pmic *p;
 	int ret;
 
-	mx25pdk_fec_init();
+	mx25default_fec_init();
 
-	ret = pmic_init(I2C_0);
+	/*ret = pmic_init(I2C_0);
 	if (ret)
 		return ret;
 
 	p = pmic_get("FSL_PMIC");
 	if (!p)
-		return -ENODEV;
+		return -ENODEV;*/
 
 	/* Turn on Ethernet PHY and LCD supplies */
-	pmic_reg_write(p, MC34704_GENERAL2_REG, ONOFFE | ONOFFA);
+	//pmic_reg_write(p, MC34704_GENERAL2_REG, ONOFFE | ONOFFA);
 
 	return 0;
 }
