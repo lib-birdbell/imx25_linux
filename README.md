@@ -2,10 +2,11 @@
 toolchain is gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabi
 
 History<BR>
-이건 tftp 마운트 하는법<BR>
-$ sudo mount //192.168.117.60/home/tftp /home/sjlee/nas -o user=sjlee,rw<BR>
+linux boot complete.<BR>
+ device-tree modified.<BR>
+<BR>
 이건 옮기는거<BR>
-$ tftp 0x80800000 ED-785/uImage;bootm<BR>
+$ tftp 0x80800000 uImage;bootm<BR>
 
 MACHINE_START에 등록하면 맞는 장치에 따라 호출됨<BR>
 clock 부분을 수정해야 하는데 작업양이 너무 많음<BR>
@@ -88,6 +89,28 @@ arch/arm/plat-mxc/Kconfig:29:config ARCH_MX25<BR>
 arch/arm/plat-mxc/irq.c 2.6<BR>
 arch/arm/mach-imx/mm-imx21.c 4.14<BR>
         avic_base = IO_ADDRESS(AVIC_BASE_ADDR);<BR>
+# linux-4.15.7
+linux for i.MX257<BR>
+<BR>
+Characteristic<BR>
+ Use device tree<BR>
+<BR>
+How to make define config<BR>
+ &#35; make imx25_default_defconfig<BR>
+<BR>
+Compiler<BR>
+ arm-buildroot-linux-uclibcgnueabi-gcc.br_real (Buildroot 2021.05-git) 9.3.0<BR>
+<BR>
+use buildroot 2021.05<BR>
+<BR>
+<BR>
+# linux-4.14.170
+linux for i.MX257<BR>
+<BR>
+Characteristic<BR>
+ Didn't use device-tree<BR>
+<BR>
+<BR>
 # uboot-2018.01
 uboot for i.MX257<BR>
 <BR>
