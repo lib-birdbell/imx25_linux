@@ -1663,7 +1663,7 @@ static int mxcnd_probe(struct platform_device *pdev)
 	}
 	if (err < 0)
 		return err;
-//host->pdata.hw_ecc = 1;host->pdata.width = 1;////debug
+
 	this->setup_data_interface = host->devtype_data->setup_data_interface;
 
 	if (host->devtype_data->needs_ip) {
@@ -1703,7 +1703,6 @@ static int mxcnd_probe(struct platform_device *pdev)
 		this->ecc.algo = NAND_ECC_HAMMING;
 	}
 
-//printk(KERN_ERR "**mxcnd_probe() width=%d\n", host->pdata.width);////debug - 0
 	/* NAND bus width determines access functions used by upper layer */
 	if (host->pdata.width == 2)
 		this->options |= NAND_BUSWIDTH_16;
@@ -1718,7 +1717,6 @@ static int mxcnd_probe(struct platform_device *pdev)
 	if (host->irq < 0)
 		return host->irq;
 
-//printk(KERN_ERR "**mxcnd_probe() irq=%d\n", host->irq);////debug - 49
 	/*
 	 * Use host->devtype_data->irq_control() here instead of irq_control()
 	 * because we must not disable_irq_nosync without having requested the
@@ -1753,14 +1751,12 @@ static int mxcnd_probe(struct platform_device *pdev)
 
 	switch (this->ecc.mode) {
 	case NAND_ECC_HW:
-printk(KERN_ERR "**mxcnd_probe() ecc_hw\n");////debug
 		this->ecc.calculate = mxc_nand_calculate_ecc;
 		this->ecc.hwctl = mxc_nand_enable_hwecc;
 		this->ecc.correct = host->devtype_data->correct_data;
 		break;
 
 	case NAND_ECC_SOFT:
-printk(KERN_ERR "**mxcnd_probe() ecc_soft\n");////debug
 		break;
 
 	default:
@@ -1792,7 +1788,6 @@ printk(KERN_ERR "**mxcnd_probe() ecc_soft\n");////debug
 			this->ecc.bytes = 9;
 	}
 
-//printk(KERN_ERR "**mxcnd_probe() eccsize=%d, eccbytes=%d\n", host->eccsize, this->ecc.bytes);////debug 4, 9
 	/*
 	 * Experimentation shows that i.MX NFC can only handle up to 218 oob
 	 * bytes. Limit used_oobsize to 218 so as to not confuse copy_spare()
@@ -1809,10 +1804,8 @@ printk(KERN_ERR "**mxcnd_probe() ecc_soft\n");////debug
 			this->ecc.strength = (host->eccsize == 4) ? 4 : 8;
 	}
 
-printk(KERN_ERR "**mxcnd_probe() nand_scan_tail\n");////debug
 	/* second phase scan */
 	err = nand_scan_tail(mtd);
-printk(KERN_ERR "**mxcnd_probe() nand_scan_tail end err=%d\n", err);////debug
 	if (err)
 		goto escan;
 
@@ -1824,14 +1817,12 @@ printk(KERN_ERR "**mxcnd_probe() nand_scan_tail end err=%d\n", err);////debug
 
 	platform_set_drvdata(pdev, host);
 
-printk(KERN_ERR "**mxcnd_probe() end\n");////debug
 	return 0;
 
 escan:
 	if (host->clk_act)
 		clk_disable_unprepare(host->clk);
 
-printk(KERN_ERR "**mxcnd_probe() err=%d\n", err);////debug
 	return err;
 }
 

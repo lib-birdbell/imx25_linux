@@ -4211,10 +4211,9 @@ int nand_scan_ident(struct mtd_info *mtd, int maxchips,
 	}
 	/* Set the default functions */
 	nand_set_defaults(chip);
-printk(KERN_ERR "**nand_scan_ident() nand_detect\n");////debug
+
 	/* Read the flash type */
 	ret = nand_detect(chip, table);
-printk(KERN_ERR "**nand_scan_ident() nand_detect ret=%d\n", ret);////debug
 	if (ret) {
 		if (!(chip->options & NAND_SCAN_SILENT_NODEV))
 			pr_warn("No NAND device found\n");
@@ -4250,7 +4249,6 @@ printk(KERN_ERR "**nand_scan_ident() nand_detect ret=%d\n", ret);////debug
 	chip->numchips = i;
 	mtd->size = i * chip->chipsize;
 
-printk(KERN_ERR "**nand_scan_ident() end\n");////debug
 	return 0;
 }
 EXPORT_SYMBOL(nand_scan_ident);
