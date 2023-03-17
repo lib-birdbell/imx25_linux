@@ -11,7 +11,7 @@
 
 /* High Level Configuration Options */
 
-#define CONFIG_SYS_TEXT_BASE		0x81200000
+#define CONFIG_SYS_TEXT_BASE		0x83f00000
 #define CONFIG_MXC_GPIO
 #define CONFIG_SYS_FSL_CLK
 
@@ -26,7 +26,8 @@
 #define CONFIG_MACH_TYPE	MACH_TYPE_MX25_3DS
 
 /* Size of malloc() pool */
-#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 2 * 1024 * 1024)
+/*////debug#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 2 * 1024 * 1024)*/
+#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 512 * 1024)
 
 /* Physical Memory Map */
 
@@ -53,8 +54,11 @@
 #define CONFIG_CONS_INDEX	2	/* use UART2 for console(UART1 - 1, UART2 - 2) */
 
 /* No NOR flash present */
+/*////debug
 #define CONFIG_ENV_OFFSET      (6 * 64 * 1024)
-#define CONFIG_ENV_SIZE        (8 * 1024)
+#define CONFIG_ENV_SIZE        (8 * 1024)*/
+#define CONFIG_ENV_OFFSET      (0x80000)
+#define CONFIG_ENV_SIZE        (0x40000)
 #define CONFIG_SYS_MMC_ENV_DEV		0
 
 /* U-Boot general configuration */
@@ -72,9 +76,12 @@
 
 /* Ethernet */
 #define CONFIG_FEC_MXC
-#define CONFIG_FEC_MXC_PHYADDR		0x1f
+/*#define CONFIG_FEC_MXC_PHYADDR		0x1f*/
+#define CONFIG_FEC_MXC_PHYADDR		0x03
 #define CONFIG_MII
 #define CONFIG_ENV_OVERWRITE
+#define	CONFIG_FEC_XCV_TYPE		RMII
+#define CONFIG_NET_RETRY_COUNT		30
 
 /* ESDHC driver */
 #define CONFIG_FSL_ESDHC
@@ -112,7 +119,6 @@
 	"image=zImage\0" \
 	"console=ttymxc1\0" \
 	"splashpos=m,m\0" \
-	"fdt_high=0xffffffff\0" \
 	"initrd_high=0xffffffff\0" \
 	"fdt_file=" CONFIG_DEFAULT_FDT_FILE "\0" \
 	"fdt_addr=0x82000000\0" \
