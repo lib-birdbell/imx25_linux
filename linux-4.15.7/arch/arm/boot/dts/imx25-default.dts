@@ -77,23 +77,23 @@
 		mux-ext-port = <4>;
 	};
 
-	wvga: display {
-		model = "CLAA057VC01CW";
+	wqvga480272: display {
+		model = "ST043L";
 		bits-per-pixel = <16>;
 		fsl,pcr = <0xfa208b80>;
 		bus-width = <18>;
-		native-mode = <&wvga_timings>;
+		native-mode = <&wqvga480272_timings>;
 		display-timings {
-			wvga_timings: 640x480 {
-				hactive = <640>;
-				vactive = <480>;
-				hback-porch = <45>;
-				hfront-porch = <114>;
-				hsync-len = <1>;
-				vback-porch = <33>;
-				vfront-porch = <11>;
-				vsync-len = <1>;
-				clock-frequency = <25200000>;
+			wqvga480272_timings: 480x272 {
+				hactive = <480>;
+				vactive = <272>;
+				hback-porch = <43>;
+				hfront-porch = <8>;
+				hsync-len = <4>;
+				vback-porch = <12>;
+				vfront-porch = <8>;
+				vsync-len = <4>;
+				clock-frequency = <9000000>;
 			};
 		};
 	};
@@ -224,6 +224,7 @@
 				MX25_PAD_LSCLK__LSCLK		0xe0
 				MX25_PAD_OE_ACD__OE_ACD		0xe0
 				MX25_PAD_CONTRAST__CONTRAST	0xe0
+				MX25_PAD_VSTBY_REQ__GPIO_3_17	0x00000000
 			>;
 		};
 
@@ -261,8 +262,8 @@
 };
 
 &lcdc {
-	display = <&wvga>;
-	fsl,lpccr = <0x00a903ff>;
+	display = <&wqvga480272>;
+	fsl,lpccr = <0x00a90371>;
 	fsl,lscr1 = <0x00120300>;
 	fsl,dmacr = <0x00020010>;
 	pinctrl-names = "default";
